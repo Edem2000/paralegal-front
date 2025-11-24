@@ -58,10 +58,14 @@ body {
 /* MAIN LAYOUT */
 .main {
     flex: 1;
-    display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
     gap: 16px;
     padding: 16px;
+}
+
+.anonymizing-panel {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
 }
 
 /* LEFT PANEL */
@@ -249,4 +253,49 @@ body {
     padding: 0 2px;
     border-radius: 2px;
     color: #000;
+}
+
+
+/*history*/
+.full-width-panel {
+    width: 100%;
+}
+
+.history-root {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-meta {
+    font-size: 0.9rem;
+    color: #777;
+    display: flex;
+    gap: 12px;
+}
+
+.history-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+.clickable-row:hover {
+    background: #f5f7ff;
+}
+
+.history-selected-hint {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #555;
 }

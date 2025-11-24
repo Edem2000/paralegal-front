@@ -2,6 +2,7 @@ import './App.css'
 import React, { useState } from 'react';
 import type { ApiResponse, Change, Kind } from './types';
 import {ChangesTable} from "./components/ChangesTable.tsx";
+import {TransactionsHistory} from "./components/TransactionsHistory.tsx";
 
 const ALL_KINDS: { id: Kind; label: string }[] = [
     { id: 'phone',    label: 'Phone' },
@@ -14,6 +15,8 @@ const ALL_KINDS: { id: Kind; label: string }[] = [
 type MaskingMode = 'readable_full' | 'full' | 'keep_tail' | 'keep_head_tail';
 
 const App: React.FC = () => {
+    const [view, setView] = useState<'mask' | 'history'>('mask');
+
     const [choices, setChoices] = useState<Kind[]>([
         'phone',
         'email',
@@ -99,6 +102,22 @@ const App: React.FC = () => {
                     <span className="brand">Paralegal UI</span>
                 </div>
                 <div className="navbar-right">
+                    {view === 'history' && (<button
+                        type="button"
+                        className={'nav-tab'}
+                        onClick={() => setView('mask')}
+                    >
+                        Anonymize
+                    </button>)}
+                    {view === 'mask' && (<button
+                        type="button"
+                        className={'nav-tab'}
+                        onClick={() => setView('history')}
+                    >
+                        History
+                    </button>)}
+                    {view === 'mask' && (
+                    <>
                     <span className="navbar-label">Masking mode:</span>
                     <select
                         value={maskingMode}
@@ -124,99 +143,111 @@ const App: React.FC = () => {
                             title="Tail length"
                         />
                     )}
+                    </>
+                    )}
                 </div>
             </header>
 
             {/* MAIN LAYOUT */}
             <main className="main">
-                <section className="left-panel">
-                    <form onSubmit={handleSubmit} className="form">
-                        {/* Choices */}
-                        <div className="form-group">
-                            <label>Data types to mask</label>
-                            <div className="choices-grid">
-                                {ALL_KINDS.map((k) => (
-                                    <label key={k.id} className="choice-item">
+
+                {view === 'mask' ? (
+                    <div className="anonymizing-panel">
+                        <section className="left-panel">
+                            <form onSubmit={handleSubmit} className="form">
+                                {/* Choices */}
+                                <div className="form-group">
+                                    <label>Data types to mask</label>
+                                    <div className="choices-grid">
+                                        {ALL_KINDS.map((k) => (
+                                            <label key={k.id} className="choice-item">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={choices.includes(k.id)}
+                                                    onChange={() => toggleChoice(k.id)}
+                                                />
+                                                <span>{k.label}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Custom queries */}
+                                <div className="form-group">
+                                    <label>Custom queries (for LLM)</label>
+                                    <div className="custom-query-input">
                                         <input
-                                            type="checkbox"
-                                            checked={choices.includes(k.id)}
-                                            onChange={() => toggleChoice(k.id)}
+                                            type="text"
+                                            value={customQueryInput}
+                                            onChange={(e) => setCustomQueryInput(e.target.value)}
+                                            placeholder="e.g. 'имена людей'"
                                         />
-                                        <span>{k.label}</span>
-                                    </label>
-                                ))}
+                                        <button type="button" onClick={addCustomQuery}>
+                                            +
+                                        </button>
+                                    </div>
+                                    {customQueries.length > 0 && (
+                                        <ul className="custom-query-list">
+                                            {customQueries.map((q, i) => (
+                                                <li key={i}>
+                                                    <span>{q}</span>
+                                                    <button type="button" onClick={() => removeCustomQuery(i)}>
+                                                        ×
+                                                    </button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+
+                                {/* Input text */}
+                                <div className="form-group">
+                                    <label>Input text</label>
+                                    <textarea
+                                        value={inputText}
+                                        onChange={(e) => setInputText(e.target.value)}
+                                        rows={10}
+                                        placeholder="Paste text to anonymize..."
+                                    />
+                                </div>
+
+                                {/* Submit */}
+                                <div className="form-actions">
+                                    <button type="submit" disabled={loading || !inputText.trim()}>
+                                        {loading ? 'Processing…' : 'Run anonymization'}
+                                    </button>
+                                </div>
+
+                                {error && <div className="error">{error}</div>}
+                            </form>
+                        </section>
+
+                        {/* RESULT PANEL */}
+                        <section className="right-panel">
+                            <div className="result-block">
+                                <h2>Final text</h2>
+                                {result ? (
+                                    <pre className="final-text">{result.finalText}</pre>
+                                ) : (
+                                    <div className="placeholder">Result will appear here</div>
+                                )}
                             </div>
-                        </div>
-
-                        {/* Custom queries */}
-                        <div className="form-group">
-                            <label>Custom queries (for LLM)</label>
-                            <div className="custom-query-input">
-                                <input
-                                    type="text"
-                                    value={customQueryInput}
-                                    onChange={(e) => setCustomQueryInput(e.target.value)}
-                                    placeholder="e.g. 'имена людей'"
-                                />
-                                <button type="button" onClick={addCustomQuery}>
-                                    +
-                                </button>
+                            <div className="result-block">
+                                <h2>Changes</h2>
+                                {changes.length === 0 ? (
+                                    <div className="placeholder">No changes yet</div>
+                                ) : (
+                                    <ChangesTable changes={changes} />
+                                )}
                             </div>
-                            {customQueries.length > 0 && (
-                                <ul className="custom-query-list">
-                                    {customQueries.map((q, i) => (
-                                        <li key={i}>
-                                            <span>{q}</span>
-                                            <button type="button" onClick={() => removeCustomQuery(i)}>
-                                                ×
-                                            </button>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </div>
-
-                        {/* Input text */}
-                        <div className="form-group">
-                            <label>Input text</label>
-                            <textarea
-                                value={inputText}
-                                onChange={(e) => setInputText(e.target.value)}
-                                rows={10}
-                                placeholder="Paste text to anonymize..."
-                            />
-                        </div>
-
-                        {/* Submit */}
-                        <div className="form-actions">
-                            <button type="submit" disabled={loading || !inputText.trim()}>
-                                {loading ? 'Processing…' : 'Run anonymization'}
-                            </button>
-                        </div>
-
-                        {error && <div className="error">{error}</div>}
-                    </form>
-                </section>
-
-                {/* RESULT PANEL */}
-                <section className="right-panel">
-                    <div className="result-block">
-                        <h2>Final text</h2>
-                        {result ? (
-                            <pre className="final-text">{result.finalText}</pre>
-                        ) : (
-                            <div className="placeholder">Result will appear here</div>
-                        )}
+                        </section>
                     </div>
-                    <div className="result-block">
-                        <h2>Changes</h2>
-                        {changes.length === 0 ? (
-                            <div className="placeholder">No changes yet</div>
-                        ) : (
-                            <ChangesTable changes={changes} />
-                        )}
-                    </div>
-                </section>
+                ) : (
+                    // история — можно на всю ширину
+                    <section className="full-width-panel">
+                        <TransactionsHistory />
+                    </section>
+                )}
             </main>
         </div>
     );
