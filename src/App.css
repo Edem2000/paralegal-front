@@ -1,0 +1,252 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f172a;
+    color: #e5e7eb;
+}
+
+#root {
+    width: 100%;
+}
+
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* NAVBAR */
+.navbar {
+    height: 56px;
+    padding: 0 16px;
+    background: #020617;
+    border-bottom: 1px solid #1f2937;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand {
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.navbar-label {
+    font-size: 0.9rem;
+    color: #9ca3af;
+}
+
+.navbar select,
+.tail-input {
+    background: #020617;
+    color: #e5e7eb;
+    border: 1px solid #374151;
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+/* MAIN LAYOUT */
+.main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+    gap: 16px;
+    padding: 16px;
+}
+
+/* LEFT PANEL */
+.left-panel {
+    background: #020617;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #1f2937;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.form-group input[type='text'],
+.form-group input[type='number'],
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #374151;
+    background: #020617;
+    color: #e5e7eb;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.choices-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px 12px;
+}
+
+.choice-item {
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.custom-query-input {
+    display: flex;
+    gap: 8px;
+}
+
+.custom-query-input input {
+    flex: 1;
+}
+
+.custom-query-input button {
+    padding: 0 10px;
+    border-radius: 6px;
+    border: none;
+    background: #1d4ed8;
+    color: white;
+    cursor: pointer;
+}
+
+.custom-query-list {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.custom-query-list li {
+    background: #111827;
+    border-radius: 999px;
+    padding: 4px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+}
+
+.custom-query-list button {
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.form-actions button {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.form-actions button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.error {
+    color: #fecaca;
+    font-size: 0.85rem;
+}
+
+/* RIGHT PANEL */
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.result-block {
+    background: #020617;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #1f2937;
+}
+
+.result-block h2 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+}
+
+.final-text {
+    margin: 0;
+    padding: 12px;
+    background: #111827;
+    border-radius: 8px;
+    border: 1px solid #1f2937;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+    white-space: pre-wrap;
+    max-height: 260px;
+    overflow: auto;
+}
+
+.placeholder {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.table-wrapper {
+    overflow: auto;
+}
+
+.changes-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.changes-table th,
+.changes-table td {
+    border: 1px solid #1f2937;
+    padding: 4px 6px;
+    text-align: left;
+}
+
+.changes-table th {
+    background: #111827;
+    position: sticky;
+    top: 0;
+}
+
+.highlight {
+    background: #fff3b0; /* мягкий жёлтый, можно поменять */
+    font-weight: 600;
+    padding: 0 2px;
+    border-radius: 2px;
+    color: #000;
+}
