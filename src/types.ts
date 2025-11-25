@@ -13,16 +13,20 @@ export type Kind =
 export type Source = 'algorithm' | 'llm' | 'final';
 
 export interface Change {
-    actor: Source;
+    id: string;
+    transactionId: string;
+    runId?: string;
+    actor: string;
     kind: string;
     before: string;
     after: string;
     start: number;
     end: number;
-    contextBefore?: string;
-    contextAfter?: string;
-    confidence?: number;
-    resolution?: string;
+    contextBefore: string;
+    contextAfter: string;
+    confidence: number;
+    resolution: string;
+    createdAt: string;
 }
 
 export interface ApiResponse {
@@ -31,7 +35,7 @@ export interface ApiResponse {
     changes?: Change[];   // ожидаем, что бэкенд вернёт это поле
 }
 
-export interface TransactionResponseDto {
+export interface Transaction {
     id: string;               // HexString
     choices: string[];
     customQueries: string[];
@@ -52,5 +56,11 @@ export interface TransactionsPageResponse {
     page: number;
     limit: number;
     pages: number;
-    transactions: TransactionResponseDto[];
+    transactions: Transaction[];
 }
+
+
+export type GetTransactionResponseDto = {
+    transaction: Transaction;
+    changes: Change[];
+};

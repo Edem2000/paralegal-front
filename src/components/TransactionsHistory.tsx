@@ -1,7 +1,13 @@
-import {useEffect, useState} from "react";
-import type {TransactionResponseDto, TransactionsPageResponse} from "../types.ts";
+import React, { useEffect, useState } from 'react';
+import type {
+    Transaction,
+    TransactionsPageResponse,
+    GetTransactionResponseDto,
+} from '../types';
+import { ChangesTable } from './ChangesTable';
 
-const API_URL = 'http://localhost:3000/api/transactions';
+const LIST_API_URL = 'http://localhost:3000/api/transactions';
+const DETAIL_API_URL = 'http://localhost:3000/api/transactions';
 
 const LIMIT_OPTIONS = [5, 10, 20, 50];
 
@@ -13,15 +19,17 @@ export const TransactionsHistory: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // на будущее: сюда же можно подвесить модальное окно
-    const [selected, setSelected] = useState<TransactionResponseDto | null>(null);
+    const [detail, setDetail] = useState<GetTransactionResponseDto | null>(null);
+    const [detailLoading, setDetailLoading] = useState(false);
+    const [detailError, setDetailError] = useState<string | null>(null);
+    const [isDetailOpen, setIsDetailOpen] = useState(false);
 
     const fetchPage = async (pageToLoad: number, limitToUse: number) => {
         setLoading(true);
         setError(null);
 
         try {
-            const url = new URL(API_URL);
+            const url = new URL(LIST_API_URL);
             url.searchParams.set('page', String(pageToLoad));
             url.searchParams.set('limit', String(limitToUse));
 
@@ -40,11 +48,31 @@ export const TransactionsHistory: React.FC = () => {
         }
     };
 
-    // первая загрузка + обновление при изменении page/limit
     useEffect(() => {
         fetchPage(page, limit);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, limit]);
+
+    const fetchDetail = async (id: string) => {
+        setDetail(null);
+        setDetailError(null);
+        setDetailLoading(true);
+        setIsDetailOpen(true);
+
+        try {
+            const resp = await fetch(`${DETAIL_API_URL}/${id}`);
+            if (!resp.ok) {
+                const text = await resp.text();
+                throw new Error(`HTTP ${resp.status}: ${text}`);
+            }
+            const json: GetTransactionResponseDto = await resp.json();
+            setDetail(json);
+        } catch (e: any) {
+            setDetailError(e?.message ?? 'Failed to load transaction details');
+        } finally {
+            setDetailLoading(false);
+        }
+    };
 
     const total = data?.total ?? 0;
     const pages = data?.pages ?? 1;
@@ -61,7 +89,7 @@ export const TransactionsHistory: React.FC = () => {
     const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newLimit = Number(e.target.value || 10);
         setLimit(newLimit);
-        setPage(1); // сбрасываем на первую страницу
+        setPage(1);
     };
 
     const formatDate = (iso?: string) => {
@@ -69,6 +97,12 @@ export const TransactionsHistory: React.FC = () => {
         const d = new Date(iso);
         if (Number.isNaN(d.getTime())) return iso;
         return d.toLocaleString();
+    };
+
+    const closeDetail = () => {
+        setIsDetailOpen(false);
+        setDetail(null);
+        setDetailError(null);
     };
 
     return (
@@ -136,8 +170,8 @@ export const TransactionsHistory: React.FC = () => {
                             <tr
                                 key={t.id}
                                 className="clickable-row"
-                                onClick={() => setSelected(t)}
-                                title="Click to see details later"
+                                onClick={() => fetchDetail(t.id)}
+                                title="Click to view details"
                             >
                                 <td>{(page - 1) * limit + idx + 1}</td>
                                 <td>{formatDate(t.createdAt)}</td>
@@ -163,10 +197,96 @@ export const TransactionsHistory: React.FC = () => {
                 </div>
             )}
 
-            {/* Заглушка под будущий модал */}
-            {selected && (
-                <div className="history-selected-hint">
-                    Selected transaction: <code>{selected.id}</code> (подробности покажем в модалке позже)
+            {/* Модальное окно с деталями транзакции */}
+            {isDetailOpen && (
+                <div className="modal-backdrop" onClick={closeDetail}>
+                    <div
+                        className="modal"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="modal-header">
+                            <h3>Transaction details</h3>
+                            <button className="modal-close" onClick={closeDetail}>
+                                ×
+                            </button>
+                        </div>
+
+                        {detailLoading && <div className="placeholder">Loading details…</div>}
+                        {detailError && <div className="error">{detailError}</div>}
+
+                        {detail && (
+                            <div className="modal-body">
+                                <section className="modal-section">
+                                    <h4>Summary</h4>
+                                    <div className="summary-grid">
+                                        <div>
+                                            <strong>ID:</strong> {detail.transaction.id}
+                                        </div>
+                                        <div>
+                                            <strong>Status:</strong> {detail.transaction.status}
+                                        </div>
+                                        <div>
+                                            <strong>Created:</strong>{' '}
+                                            {formatDate(detail.transaction.createdAt)}
+                                        </div>
+                                        <div>
+                                            <strong>Requested:</strong>{' '}
+                                            {formatDate(detail.transaction.requestedAt)}
+                                        </div>
+                                        <div>
+                                            <strong>Processed:</strong>{' '}
+                                            {formatDate(detail.transaction.processedAt)}
+                                        </div>
+                                    </div>
+                                    <div className="summary-grid">
+                                        <div>
+                                            <strong>Choices:</strong>{' '}
+                                            {detail.transaction.choices.join(', ')}
+                                        </div>
+                                        <div>
+                                            <strong>Custom queries:</strong>{' '}
+                                            {detail.transaction.customQueries.join(', ')}
+                                        </div>
+                                    </div>
+                                    {detail.transaction.errorMessage && (
+                                        <div className="error">
+                                            <strong>Error:</strong> {detail.transaction.errorMessage}
+                                        </div>
+                                    )}
+                                </section>
+
+                                <section className="modal-section">
+                                    <h4>Stats</h4>
+                                    <pre className="stats-block">
+                    {JSON.stringify(detail.transaction.stats, null, 2)}
+                  </pre>
+                                </section>
+
+                                <section className="modal-section">
+                                    <h4>Input text</h4>
+                                    <pre className="final-text">
+                    {detail.transaction.inputText}
+                  </pre>
+                                </section>
+
+                                <section className="modal-section">
+                                    <h4>Final text</h4>
+                                    <pre className="final-text">
+                    {detail.transaction.finalText}
+                  </pre>
+                                </section>
+
+                                <section className="modal-section">
+                                    <h4>Changes</h4>
+                                    {detail.changes.length === 0 ? (
+                                        <div className="placeholder">No changes</div>
+                                    ) : (
+                                        <ChangesTable changes={detail.changes} />
+                                    )}
+                                </section>
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
         </div>
