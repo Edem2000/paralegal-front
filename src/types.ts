@@ -16,17 +16,25 @@ export interface Change {
     id: string;
     transactionId: string;
     runId?: string;
-    actor: string;
-    kind: string;
-    before: string;
-    after: string;
-    start: number;
-    end: number;
-    contextBefore: string;
-    contextAfter: string;
-    confidence: number;
-    resolution: string;
-    createdAt: string;
+    actor: string,
+    kind: string,
+    before: string,
+    beforeDetails: {
+        start: number,
+        end: number,
+        contextBefore: string,
+        contextAfter: string,
+    },
+    after: string,
+    afterDetails: {
+        start: number,
+        end: number,
+        contextBefore: string,
+        contextAfter: string,
+    },
+    confidence: number,
+    resolution: string,
+    createdAt: string,
 }
 
 export interface ApiResponse {

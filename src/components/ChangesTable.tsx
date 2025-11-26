@@ -1,4 +1,3 @@
-// src/components/ChangesTable.tsx
 import React from 'react';
 import type {Change} from "../types.ts";
 
@@ -19,27 +18,24 @@ export const ChangesTable: React.FC<ChangesTableProps> = ({ changes }) => {
                 </tr>
                 </thead>
                 <tbody>
-                {changes.map((c, i) => {
-                    const ctxBefore = c.contextBefore ?? '';
-                    const ctxAfter = c.contextAfter ?? '';
-
+                {changes.map((change, i) => {
                     return (
                         <tr key={i}>
                             <td>{i + 1}</td>
 
                             <td>
-                                {ctxBefore}
-                                <span className="highlight">{c.before}</span>
-                                {ctxAfter}
+                                {change.beforeDetails.contextBefore}
+                                <span className="highlight">{change.before}</span>
+                                {change.beforeDetails.contextAfter}
                             </td>
 
                             <td>
-                                {ctxBefore}
-                                <span className="highlight">{c.after}</span>
-                                {ctxAfter}
+                                {change.afterDetails.contextBefore}
+                                <span className="highlight">{change.after}</span>
+                                {change.afterDetails.contextAfter}
                             </td>
 
-                            <td>{c.actor}</td>
+                            <td>{change.actor}</td>
                         </tr>
                     );
                 })}
