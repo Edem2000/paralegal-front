@@ -14,7 +14,7 @@ body {
 }
 
 .app {
-    min-height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
 }
@@ -29,6 +29,7 @@ body {
     align-items: center;
     justify-content: space-between;
 }
+
 .with-padding{
     padding: 16px;
 }
@@ -69,16 +70,19 @@ body {
 
 /* MAIN LAYOUT */
 .main {
-    flex: 1;
+    height: calc(100% - 56px);
     gap: 16px;
     padding: 16px;
+    display: flex;
+    align-items: stretch;
 }
 
 .anonymizing-panel {
     width: 100%;
-    display: grid;
+    height: 100%;
+    display: flex;
     gap: 16px;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+
 }
 
 /* LEFT PANEL */
@@ -87,12 +91,34 @@ body {
     border-radius: 12px;
     padding: 16px;
     border: 1px solid #1f2937;
+    display: flex;
+    flex-direction: column;
+    width: calc(50% - 8px);
+    height: 100%;
 }
 
 .form {
     display: flex;
     flex-direction: column;
+    height: 100%;
     gap: 16px;
+}
+.form-half {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 50%;
+}
+
+.form-group.growing {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.form-group.growing textarea {
+    flex-grow: 1;
+    resize: none;
 }
 
 .form-group label {
@@ -114,8 +140,11 @@ body {
 }
 
 .form-group textarea {
-    resize: vertical;
     min-height: 120px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+    line-height: 1.5;
+    font-size: 16px;
 }
 
 .choices-grid {
@@ -230,9 +259,16 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    height: 100%;
+    width: calc(50% - 8px);
 }
 
 .result-block {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 0;
+    max-height: 50%;
     background: #020617;
     border-radius: 12px;
     padding: 16px;
@@ -245,6 +281,9 @@ body {
 }
 
 .final-text {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
     margin: 0;
     padding: 12px;
     background: #111827;
@@ -252,8 +291,8 @@ body {
     border: 1px solid #1f2937;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
     'Courier New', monospace;
+    line-height: 1.5;
     white-space: pre-wrap;
-    max-height: 260px;
     overflow: auto;
 }
 

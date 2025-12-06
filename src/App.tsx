@@ -187,84 +187,88 @@ const App: React.FC = () => {
                     <div className="anonymizing-panel">
                         <section className="left-panel">
                             <form onSubmit={handleSubmit} className="form">
-                                {/* Choices */}
-                                <div className="form-group">
-                                    <label>Data types to mask</label>
-                                    <div className="choices-grid">
-                                        {ALL_KINDS.map((k) => (
-                                            <label key={k.id} className="choice-item">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={choices.includes(k.id)}
-                                                    onChange={() => toggleChoice(k.id)}
-                                                />
-                                                <span>{k.label}</span>
-                                            </label>
-                                        ))}
+                                <div className="form-half">
+                                    {/* Choices */}
+                                    <div className="form-group">
+                                        <label>Data types to mask</label>
+                                        <div className="choices-grid">
+                                            {ALL_KINDS.map((k) => (
+                                                <label key={k.id} className="choice-item">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={choices.includes(k.id)}
+                                                        onChange={() => toggleChoice(k.id)}
+                                                    />
+                                                    <span>{k.label}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+
+                                        <label style={{marginTop: '16px'}}>LLM-processed. Longer thinking - preciser result</label>
+                                        <div className="choices-grid">
+                                            {LLM_KINDS.map((k) => (
+                                                <label key={k.id} className="choice-item">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={llmChoices.includes(k.id)}
+                                                        onChange={() => toggleLlmChoice(k.id)}
+                                                    />
+                                                    <span>{k.label}</span>
+                                                </label>
+                                            ))}
+                                        </div>
                                     </div>
 
-                                    <label style={{marginTop: '16px'}}>LLM-processed. Longer thinking - preciser result</label>
-                                    <div className="choices-grid">
-                                        {LLM_KINDS.map((k) => (
-                                            <label key={k.id} className="choice-item">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={llmChoices.includes(k.id)}
-                                                    onChange={() => toggleLlmChoice(k.id)}
-                                                />
-                                                <span>{k.label}</span>
-                                            </label>
-                                        ))}
+                                    {/* Custom queries */}
+                                    <div className="form-group">
+                                        <label>Custom queries (for LLM)</label>
+                                        <div className="custom-query-input">
+                                            <input
+                                                type="text"
+                                                value={customQueryInput}
+                                                onChange={(e) => setCustomQueryInput(e.target.value)}
+                                                placeholder="e.g. 'contract number'"
+                                            />
+                                            <button type="button" onClick={addCustomQuery}>
+                                                +
+                                            </button>
+                                        </div>
+                                        {customQueries.length > 0 && (
+                                            <ul className="custom-query-list">
+                                                {customQueries.map((q, i) => (
+                                                    <li key={i}>
+                                                        <span>{q}</span>
+                                                        <button type="button" onClick={() => removeCustomQuery(i)}>
+                                                            ×
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
                                     </div>
                                 </div>
 
-                                {/* Custom queries */}
-                                <div className="form-group">
-                                    <label>Custom queries (for LLM)</label>
-                                    <div className="custom-query-input">
-                                        <input
-                                            type="text"
-                                            value={customQueryInput}
-                                            onChange={(e) => setCustomQueryInput(e.target.value)}
-                                            placeholder="e.g. 'contract number'"
+                                <div className="form-half">
+                                    {/* Input text */}
+                                    <div className="form-group growing">
+                                        <label>Input text</label>
+                                        <textarea
+                                            value={inputText}
+                                            onChange={(e) => setInputText(e.target.value)}
+                                            rows={10}
+                                            placeholder="Paste text to anonymize..."
                                         />
-                                        <button type="button" onClick={addCustomQuery}>
-                                            +
+                                    </div>
+
+                                    {/* Submit */}
+                                    <div className="form-actions">
+                                        <button type="submit" disabled={loading || !inputText.trim()}>
+                                            {loading ? 'Processing…' : 'Run anonymization'}
                                         </button>
                                     </div>
-                                    {customQueries.length > 0 && (
-                                        <ul className="custom-query-list">
-                                            {customQueries.map((q, i) => (
-                                                <li key={i}>
-                                                    <span>{q}</span>
-                                                    <button type="button" onClick={() => removeCustomQuery(i)}>
-                                                        ×
-                                                    </button>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </div>
 
-                                {/* Input text */}
-                                <div className="form-group">
-                                    <label>Input text</label>
-                                    <textarea
-                                        value={inputText}
-                                        onChange={(e) => setInputText(e.target.value)}
-                                        rows={10}
-                                        placeholder="Paste text to anonymize..."
-                                    />
+                                    {error && <div className="error">{error}</div>}
                                 </div>
-
-                                {/* Submit */}
-                                <div className="form-actions">
-                                    <button type="submit" disabled={loading || !inputText.trim()}>
-                                        {loading ? 'Processing…' : 'Run anonymization'}
-                                    </button>
-                                </div>
-
-                                {error && <div className="error">{error}</div>}
                             </form>
                         </section>
 
