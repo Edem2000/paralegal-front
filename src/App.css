@@ -34,6 +34,15 @@ body {
     font-weight: 600;
     letter-spacing: 0.03em;
 }
+.logo-block {
+    height: 56px;
+    display: flex;
+    padding: 0 3px;
+}
+
+.logo-title {
+    height: 100%;
+}
 
 .navbar-right {
     display: flex;
@@ -65,6 +74,7 @@ body {
 .anonymizing-panel {
     width: 100%;
     display: grid;
+    gap: 16px;
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
 }
 
@@ -84,7 +94,7 @@ body {
 
 .form-group label {
     font-size: 0.9rem;
-    color: #9ca3af;
+    color: #c5c9d1;
     display: block;
     margin-bottom: 4px;
 }
@@ -97,7 +107,7 @@ body {
     border-radius: 6px;
     border: 1px solid #374151;
     background: #020617;
-    color: #e5e7eb;
+    color: #c5c9d1;
 }
 
 .form-group textarea {
@@ -177,7 +187,32 @@ body {
     cursor: pointer;
 }
 
+.navbar-right button {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+}
+
 .form-actions button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.history-controls button {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.history-controls button:disabled {
     opacity: 0.5;
     cursor: default;
 }
@@ -221,7 +256,7 @@ body {
 
 .placeholder {
     font-size: 0.9rem;
-    color: #6b7280;
+    color: #c5c9d1;
 }
 
 .table-wrapper {
@@ -275,7 +310,7 @@ body {
 
 .history-meta {
     font-size: 0.9rem;
-    color: #777;
+    color: #e5e7eb;
     display: flex;
     gap: 12px;
 }
@@ -380,5 +415,5 @@ body {
 }
 
 .clickable-row:hover {
-    background: #f5f7ff;
+    background: #020617;
 }

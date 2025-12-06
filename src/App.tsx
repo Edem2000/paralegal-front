@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import type {ApiResponse, Change, Kind, LlmKind} from './types';
 import {ChangesTable} from "./components/ChangesTable.tsx";
 import {TransactionsHistory} from "./components/TransactionsHistory.tsx";
+import logo from "./assets/logo_title.png"
 
 const ALL_KINDS: { id: Kind; label: string }[] = [
     { id: 'phone',    label: 'Phone' },
@@ -128,7 +129,9 @@ const App: React.FC = () => {
             {/* NAVBAR */}
             <header className="navbar">
                 <div className="navbar-left">
-                    <span className="brand">Paralegal UI</span>
+                    <div className="logo-block">
+                        <img className="logo-title" src={logo} alt="Logo description"/>
+                    </div>
                 </div>
                 <div className="navbar-right">
                     {view === 'history' && (<button
