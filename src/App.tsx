@@ -1,6 +1,6 @@
 import './App.css'
 import React, { useState } from 'react';
-import type { ApiResponse, Change, Kind } from './types';
+import type {ApiResponse, Change, Kind, LlmKind} from './types';
 import {ChangesTable} from "./components/ChangesTable.tsx";
 import {TransactionsHistory} from "./components/TransactionsHistory.tsx";
 
@@ -9,7 +9,19 @@ const ALL_KINDS: { id: Kind; label: string }[] = [
     { id: 'email',    label: 'Email' },
     { id: 'card',     label: 'Card' },
     { id: 'passport', label: 'Passport' },
+    { id: 'pinfl', label: 'PINFL' },
     { id: 'tin',      label: 'TIN' },
+];
+
+const LLM_KINDS: { id: LlmKind; label: string }[] = [
+    { id: 'date_of_birth',     label: 'Date of Birth' },
+    { id: 'residence_address', label: 'Residence Address' },
+    { id: 'person_name',       label: 'Person name' },
+    { id: 'medical_condition', label: 'Medical condition' },
+    { id: 'company_name',      label: 'Company name' },
+    { id: 'company_address',   label: 'Company address' },
+    // { id: 'contract_number',   label: 'Contract number' },
+    // { id: 'contract_date',     label: 'Contract date' },
 ];
 
 type MaskingMode = 'readable_full' | 'full' | 'keep_tail' | 'keep_head_tail';
@@ -22,7 +34,17 @@ const App: React.FC = () => {
         'email',
         'card',
         'passport',
+        'pinfl',
         'tin',
+    ]);
+
+    const [llmChoices, setLlmChoices] = useState<LlmKind[]>([
+        'date_of_birth',
+        'residence_address',
+        'person_name',
+        'medical_condition',
+        'company_name',
+        'company_address',
     ]);
 
     const [customQueryInput, setCustomQueryInput] = useState('');
@@ -39,6 +61,12 @@ const App: React.FC = () => {
 
     const toggleChoice = (kind: Kind) => {
         setChoices((prev) =>
+            prev.includes(kind) ? prev.filter((k) => k !== kind) : [...prev, kind],
+        );
+    };
+
+    const toggleLlmChoice = (kind: LlmKind) => {
+        setLlmChoices((prev) =>
             prev.includes(kind) ? prev.filter((k) => k !== kind) : [...prev, kind],
         );
     };
@@ -64,6 +92,7 @@ const App: React.FC = () => {
             const body = {
                 inputText,
                 choices,
+                llmChoices,
                 customQueries,
                 maskingMode,
                 tailLength:
@@ -170,6 +199,20 @@ const App: React.FC = () => {
                                             </label>
                                         ))}
                                     </div>
+
+                                    <label>LLM-processed. Longer thinking - preciser result</label>
+                                    <div className="choices-grid">
+                                        {LLM_KINDS.map((k) => (
+                                            <label key={k.id} className="choice-item">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={llmChoices.includes(k.id)}
+                                                    onChange={() => toggleLlmChoice(k.id)}
+                                                />
+                                                <span>{k.label}</span>
+                                            </label>
+                                        ))}
+                                    </div>
                                 </div>
 
                                 {/* Custom queries */}
@@ -180,7 +223,7 @@ const App: React.FC = () => {
                                             type="text"
                                             value={customQueryInput}
                                             onChange={(e) => setCustomQueryInput(e.target.value)}
-                                            placeholder="e.g. 'имена людей'"
+                                            placeholder="e.g. 'contract number'"
                                         />
                                         <button type="button" onClick={addCustomQuery}>
                                             +

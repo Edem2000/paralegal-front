@@ -3,12 +3,23 @@ export type Kind =
     | 'email'
     | 'card'
     | 'passport'
+    | 'pinfl'
     | 'tin'
     | 'dob'
     | 'address'
     | 'person_name'
     | 'medical'
     | 'custom';
+
+export type LlmKind =
+    | 'date_of_birth'
+    | 'residence_address'
+    | 'person_name'
+    | 'medical_condition'
+    | 'company_name'
+    | 'company_address'
+    | 'contract_number'
+    | 'contract_date'
 
 export type Source = 'algorithm' | 'llm' | 'final';
 
