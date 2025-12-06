@@ -203,7 +203,7 @@ const App: React.FC = () => {
                                         ))}
                                     </div>
 
-                                    <label>LLM-processed. Longer thinking - preciser result</label>
+                                    <label style={{marginTop: '16px'}}>LLM-processed. Longer thinking - preciser result</label>
                                     <div className="choices-grid">
                                         {LLM_KINDS.map((k) => (
                                             <label key={k.id} className="choice-item">

@@ -159,6 +159,7 @@ export const TransactionsHistory: React.FC = () => {
                             <th>Created at</th>
                             <th>Status</th>
                             <th>Choices</th>
+                            <th>LLM Choices</th>
                             <th>Custom queries</th>
                             <th>Input snippet</th>
                             <th>Error</th>
@@ -176,6 +177,7 @@ export const TransactionsHistory: React.FC = () => {
                                 <td>{formatDate(t.createdAt)}</td>
                                 <td>{t.status}</td>
                                 <td>{t.choices.join(', ')}</td>
+                                <td>{t.llmChoices.join(', ')}</td>
                                 <td>{t.customQueries.join(', ')}</td>
                                 <td>
                                     {t.inputText.length > 80
@@ -210,8 +212,8 @@ export const TransactionsHistory: React.FC = () => {
                             </button>
                         </div>
 
-                        {detailLoading && <div className="placeholder">Loading details…</div>}
-                        {detailError && <div className="error">{detailError}</div>}
+                        {detailLoading && <div className="with-padding placeholder">Loading details…</div>}
+                        {detailError && <div className="with-padding error">{detailError}</div>}
 
                         {detail && (
                             <div className="modal-body">
@@ -237,10 +239,14 @@ export const TransactionsHistory: React.FC = () => {
                                             {formatDate(detail.transaction.processedAt)}
                                         </div>
                                     </div>
-                                    <div className="summary-grid">
+                                    <div className="summary-grid" style={{marginTop: '16px'}}>
                                         <div>
                                             <strong>Choices:</strong>{' '}
                                             {detail.transaction.choices.join(', ')}
+                                        </div>
+                                        <div>
+                                            <strong>LLM Choices:</strong>{' '}
+                                            {detail.transaction.llmChoices.join(', ')}
                                         </div>
                                         <div>
                                             <strong>Custom queries:</strong>{' '}

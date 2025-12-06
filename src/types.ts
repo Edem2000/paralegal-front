@@ -57,6 +57,7 @@ export interface ApiResponse {
 export interface Transaction {
     id: string;               // HexString
     choices: string[];
+    llmChoices: string[];
     customQueries: string[];
 
     inputText: string;
